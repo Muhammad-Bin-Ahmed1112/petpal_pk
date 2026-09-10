@@ -51,8 +51,7 @@ elif menu == "🚨 Emergency":
     with col2:
         age = st.text_input("Age", "2 years", key="em_age")
 
-    # SIRF 3 CITIES
-    city = st.selectbox("Your City", ["Lahore", "Karachi", "Gujranwala"])
+    city = st.text_input("Your City", "Lahore", help="Type any city in Pakistan — clinics are searched live, no fixed list")
     symptoms = st.text_area("Describe Symptoms", "vomiting, not eating, weak")
 
     if st.button("Get Help Now"):
@@ -66,7 +65,7 @@ elif menu == "🚨 Emergency":
         st.markdown(st.session_state.emergency_result)
 
         st.markdown("### 🏥 Veterinary Clinics Near You")
-        st.caption(f"Powered by OpenStreetMap + Manual Data • Updated {datetime.now().strftime('%I:%M %p')}")
+        st.caption(f"Live data from OpenStreetMap (Overpass/Nominatim) • Updated {datetime.now().strftime('%I:%M %p')}")
 
         clinics = st.session_state.emergency_clinics
         if clinics:

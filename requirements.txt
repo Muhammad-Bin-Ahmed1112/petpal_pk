@@ -1,5 +1,5 @@
 streamlit
-groq
-requests
 streamlit-folium
 folium
+groq
+requests

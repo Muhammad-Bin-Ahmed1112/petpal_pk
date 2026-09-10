@@ -39,25 +39,38 @@ elif menu == "🚨 Emergency":
         st.write(ai_result)
 
         st.markdown("### 🏥 Live Veterinary Clinics Near You")
-        st.caption(f"Live from OpenStreetMap • Updated {datetime.now().strftime('%I:%M %p')}")
+        st.caption(f"Live from OSM + DuckDuckGo • Updated {datetime.now().strftime('%I:%M %p')}")
 
         if clinics:
-            # MAP YAHAN AAYEGA
-            m = folium.Map(location=[float(clinics[0]['lat']), float(clinics[0]['lon'])], zoom_start=12)
-            for clinic in clinics:
-                if clinic['lat'] and clinic['lon']: # error se bachne ke liye
+            # 1. PEHLE MAP BANANE KI KOSHISH KARO
+            map_clinics = [c for c in clinics if c.get('lat') and c.get('lon')]
+
+            if map_clinics: # Agar OSM se data aya
+                m = folium.Map(location=[float(map_clinics[0]['lat']), float(map_clinics[0]['lon'])], zoom_start=12)
+                for clinic in map_clinics:
                     folium.Marker(
                         [float(clinic['lat']), float(clinic['lon'])],
                         popup=f"<b>{clinic['name']}</b><br>{clinic['address']}"
                     ).add_to(m)
-            st_folium(m, width=700, height=400) # Map show hoga
+                st_folium(m, width=700, height=400)
+            else: # Agar DDG se aya to map nahi banega
+                st.info("Map data not available. Showing links below.")
 
+            # 2. LIST HAR HAAL ME SHOW HOGI
             st.markdown("#### Clinic List")
-            # LIST YAHAN AAYEGI
             for i, clinic in enumerate(clinics, 1):
                 with st.container(border=True):
                     st.markdown(f"**{i}. {clinic['name']}**")
                     st.write(f"📍 {clinic['address']}")
+                    st.write(f"📞 {clinic['phone']}")
+
+                    # YEH NAYA CHECK: Link add kiya
+                    if clinic.get('lat') and clinic.get('lon'):
+                        osm_url = f"https://www.openstreetmap.org/?mlat={clinic['lat']}&mlon={clinic['lon']}"
+                        st.write(f"[🗺️ View on OpenStreetMap]({osm_url})")
+                    else:
+                        google_url = f"https://www.google.com/maps/search/?api=1&query={clinic['name']} {city}"
+                        st.write(f"[🗺️ Search on Google Maps]({google_url})")
         else:
             st.info("Could not load live clinics. Try 'Rawalpindi' or 'Lahore'")
 

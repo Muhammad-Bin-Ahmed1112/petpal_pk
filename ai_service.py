@@ -12,7 +12,7 @@ def call_groq(prompt):
     try:
         chat_completion = client.chat.completions.create(
             messages=[{"role": "user", "content": prompt}],
-            model="llama-3.1-8b-instant", # sabse tez model
+            model="openai/gpt-oss-120b", # sabse tez model
         )
         return chat_completion.choices[0].message.content
     except Exception as e:

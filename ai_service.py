@@ -19,8 +19,8 @@ if not GROQ_API_KEY:
 client = Groq(api_key=GROQ_API_KEY)
 MODEL = "openai/gpt-oss-120b"
 
-# 2. NEW: FREE Real-time Clinic Search using OpenStreetMap
-def search_clinics_realtime(city):
+# 2. OSM SEARCH - For Map + GPS
+def search_clinics_osm(city):
     """Search real vets using OpenStreetMap Nominatim - FREE"""
     url = "https://nominatim.openstreetmap.org/search"
     params = {
@@ -29,12 +29,10 @@ def search_clinics_realtime(city):
         "limit": 3,
         "addressdetails": 1
     }
-    headers = {"User-Agent": "PetPal-PK-Hackathon/1.0"} # OSM requires this
+    headers = {"User-Agent": "PetPal-PK-Hackathon/1.0"}
 
     try:
-        with st.spinner(f"Searching clinics in {city}..."):
-            response = requests.get(url, params=params, headers=headers, timeout=8)
-
+        response = requests.get(url, params=params, headers=headers, timeout=8)
         if response.status_code == 200:
             data = response.json()
             clinics = []
@@ -50,8 +48,50 @@ def search_clinics_realtime(city):
         else:
             return []
     except Exception as e:
-        st.warning(f"Could not fetch live clinics: {e}")
+        print(f"OSM Error: {e}")
         return []
+
+# 2.1 DDG BACKUP - For Name + Description
+def search_clinics_ddg(city):
+    """Backup search using DuckDuckGo - no key needed"""
+    url = "https://api.duckgo.com/"
+    params = {"q": f"veterinary clinic {city} Pakistan", "format": "json", "no_html": 1}
+    try:
+        res = requests.get(url, params=params, timeout=5).json()
+        clinics = []
+        for topic in res.get("RelatedTopics", [])[:3]:
+            if "Text" in topic:
+                clinics.append({
+                    "name": topic["Text"].split(" - ")[0][:50],
+                    "address": topic["Text"],
+                    "lat": None,
+                    "lon": None,
+                    "phone": "Check link"
+                })
+        return clinics
+    except Exception as e:
+        print(f"DDG Error: {e}")
+        return []
+
+# 2.2 MAIN SMART SEARCH
+def search_clinics_realtime(city):
+    """First try OSM, if empty then try DDG"""
+    with st.spinner(f"Searching clinics in {city}..."):
+        clinics = search_clinics_osm(city)
+
+    if not clinics:
+        st.info("OSM pe result nahi mila. Trying DuckDuckGo...")
+        clinics = search_clinics_ddg(city)
+
+    if not clinics:
+        clinics = [{
+            "name": f"Search 'Vet Clinic {city}' on Google",
+            "address": "No live data found",
+            "lat": None,
+            "lon": None,
+            "phone": "N/A"
+        }]
+    return clinics
 
 # 3. Your 3 AI Functions
 def get_vaccination_schedule(pet_type, age):

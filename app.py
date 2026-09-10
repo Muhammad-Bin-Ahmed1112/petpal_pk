@@ -1,7 +1,6 @@
 import streamlit as st
-from datetime import datetime  # FIX
-from ai_services import get_vaccination_schedule, get_food_recipe, get_emergency_advice
-
+from datetime import datetime  
+from ai_services import get_vaccination_schedule, get_food_recipe, get_emergency_advice  # FIXED
 st.title("🐾 PetPal Pakistan")
 
 menu = st.sidebar.radio("Menu", ["📅 Vaccination", "🍖 Recipe", "🚨 Emergency"])

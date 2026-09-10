@@ -1,5 +1,6 @@
 import streamlit as st
-from ai_service import get_vaccination_schedule, get_food_recipe, get_emergency_advice
+from datetime import datetime  # FIX
+from ai_services import get_vaccination_schedule, get_food_recipe, get_emergency_advice
 
 st.title("🐾 PetPal Pakistan")
 
@@ -37,7 +38,7 @@ elif menu == "🚨 Emergency":
         st.write(ai_result)
 
         st.markdown("### 🏥 Live Veterinary Clinics Near You")
-        st.caption(f"Live from OpenStreetMap • Updated {datetime.now().strftime('%I:%M %p')}")
+        st.caption(f"Live from OpenStreetMap • Updated {datetime.now().strftime('%I:%M %p')}") # NOW WORKS
 
         if clinics:
             for i, clinic in enumerate(clinics, 1):

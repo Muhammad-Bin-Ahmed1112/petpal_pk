@@ -7,7 +7,7 @@ import folium
 st.set_page_config(page_title="PetPal Pakistan", page_icon="🐾", layout="wide")
 st.title("🐾 PetPal Pakistan")
 
-# 1. RESULT YAAD RAKHNE KE LIYE
+# RESULT YAAD RAKHNE KE LIYE
 if 'emergency_result' not in st.session_state:
     st.session_state.emergency_result = None
     st.session_state.emergency_clinics = None
@@ -51,7 +51,8 @@ elif menu == "🚨 Emergency":
     with col2:
         age = st.text_input("Age", "2 years", key="em_age")
 
-    city = st.text_input("Your City", "Lahore")
+    # SIRF 3 CITIES
+    city = st.selectbox("Your City", ["Lahore", "Karachi", "Gujranwala"])
     symptoms = st.text_area("Describe Symptoms", "vomiting, not eating, weak")
 
     if st.button("Get Help Now"):
@@ -60,17 +61,16 @@ elif menu == "🚨 Emergency":
             st.session_state.emergency_result = ai_result
             st.session_state.emergency_clinics = clinics
 
-    # 2. RESULT SESSION SE SHOW KARO - IS WAJA SE GAYAB NAHI HOGA
     if st.session_state.emergency_result:
         st.markdown("### 🩺 First Aid & Severity")
         st.markdown(st.session_state.emergency_result)
 
-        st.markdown("### 🏥 Live Veterinary Clinics Near You")
-        st.caption(f"Live from OSM + DuckDuckGo • Updated {datetime.now().strftime('%I:%M %p')}")
+        st.markdown("### 🏥 Veterinary Clinics Near You")
+        st.caption(f"Powered by OpenStreetMap + Manual Data • Updated {datetime.now().strftime('%I:%M %p')}")
 
         clinics = st.session_state.emergency_clinics
-        if clinics and clinics[0]['name']!= "No live data found":
-            # SIRF JINKE PAAS LAT/LON HAI UNKA MAP BANAO
+        if clinics:
+            # SIRF MAP WALE CLINICS
             map_clinics = [c for c in clinics if c.get('lat') and c.get('lon')]
 
             if map_clinics:
@@ -82,8 +82,6 @@ elif menu == "🚨 Emergency":
                         tooltip=clinic['name']
                     ).add_to(m)
                 st_folium(m, width=700, height=400, returned_objects=[])
-            else:
-                st.info("Map data not available. Showing clinic list below.")
 
             st.markdown("#### Clinic List")
             for i, clinic in enumerate(clinics, 1):
@@ -91,15 +89,10 @@ elif menu == "🚨 Emergency":
                     st.markdown(f"**{i}. {clinic['name']}**")
                     st.write(f"📍 {clinic['address']}")
                     st.write(f"📞 {clinic['phone']}")
-
-                    # LINK KA CHECK
                     if clinic.get('lat') and clinic.get('lon'):
                         osm_url = f"https://www.openstreetmap.org/?mlat={clinic['lat']}&mlon={clinic['lon']}"
                         st.write(f"[🗺️ View on OpenStreetMap]({osm_url})")
-                    else:
-                        google_url = f"https://www.google.com/maps/search/?api=1&query={clinic['name']} {city}"
-                        st.write(f"[🗺️ Search on Google Maps]({google_url})")
         else:
-            st.warning("Could not load live clinics. Please try 'Lahore', 'Karachi', or 'Islamabad'")
+            st.warning("No clinics found")
 
         st.error("**Disclaimer**: This is first-aid guidance only. Contact a licensed vet immediately for emergencies.")

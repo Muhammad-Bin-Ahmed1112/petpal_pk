@@ -3,16 +3,16 @@ from ai_service import get_vaccination_schedule, get_food_recipe, get_emergency_
 
 st.title("🐾 PetPal Pakistan")
 
-menu = st.sidebar.radio("Menu", ["📅 Vaccination", "🍖 Sasta Khana", "🚨 Emergency"])
+menu = st.sidebar.radio("Menu", ["📅 Vaccination", "🍖 Recipe", "🚨 Emergency"])
 
 if menu == "📅 Vaccination":
-    pet_type = st.selectbox("Pet", ["Kutta", "Billi"])
+    pet_type = st.selectbox("Pet", ["Dog", "Billi"])
     age = st.text_input("Umar", "2 saal")
     if st.button("Schedule"):
         st.write(get_vaccination_schedule(pet_type, age))
 
-elif menu == "🍖 Sasta Khana":
-    pet_type = st.selectbox("Pet", ["Kutta", "Billi"])
+elif menu == "🍖 Recipe":
+    pet_type = st.selectbox("Pet", ["Dog", "Billi"])
     age = st.text_input("Umar", "2 saal")
     ingredients = st.text_area("Ingredients", "chicken, chawal")
     budget = st.number_input("Budget", 500)

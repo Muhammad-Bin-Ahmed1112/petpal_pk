@@ -1,10 +1,14 @@
 import os
-from dotenv import load_dotenv
-load_dotenv()
-
+import streamlit as st # <-- ye add karo
 from groq import Groq
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+# Cloud + Local dono ke liye kaam karega
+API_KEY = st.secrets.get("GROQ_API_KEY") or os.getenv("GROQ_API_KEY")
+
+if not API_KEY:
+    st.error("GROQ_API_KEY not found. Please add it to Streamlit Secrets")
+
+client = Groq(api_key=API_KEY)
 MODEL = "openai/gpt-oss-120b"
 
 def get_vaccination_schedule(pet_type, age):

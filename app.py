@@ -18,7 +18,7 @@ if menu == "📅 Vaccination":
     st.header("📅 Vaccination Schedule")
     col1, col2 = st.columns(2)
     with col1:
-        pet_type = st.selectbox("Pet Type", ["Dog", "Cat", "Rabbit"])
+        pet_type = st.selectbox("Pet Type", ["Dog", "Cat"])
     with col2:
         age = st.text_input("Age", "2 years")
 
@@ -47,7 +47,7 @@ elif menu == "🚨 Emergency":
     st.header("🚨 Emergency Help")
     col1, col2 = st.columns(2)
     with col1:
-        pet_type = st.selectbox("Pet Type", ["Dog", "Cat", "Rabbit"], key="em_pet")
+        pet_type = st.selectbox("Pet Type", ["Dog", "Cat"], key="em_pet")
     with col2:
         age = st.text_input("Age", "2 years", key="em_age")
 
